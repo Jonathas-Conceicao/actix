@@ -146,10 +146,12 @@ pub mod dev {
     pub use crate::prelude::*;
 
     pub use crate::address::{
-        Envelope, EnvelopeProxy, RecipientRequest, Request, ToEnvelope,
+        Envelope, EnvelopeProxy, RecipientRequest, Request, SyncSender, ToEnvelope,
     };
     pub mod channel {
-        pub use crate::address::channel::{channel, AddressReceiver, AddressSender};
+        pub use crate::address::channel::{
+            channel, AddressReceiver, AddressSender, AddressSenderProducer,
+        };
     }
     pub use crate::contextimpl::{AsyncContextParts, ContextFut, ContextParts};
     pub use crate::handler::{MessageResponse, ResponseChannel};

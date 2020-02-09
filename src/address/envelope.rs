@@ -1,10 +1,10 @@
 use std::marker::PhantomData;
 
-use futures::channel::oneshot::Sender;
-
 use crate::actor::{Actor, AsyncContext};
 use crate::context::Context;
 use crate::handler::{Handler, Message, MessageResponse};
+
+pub use futures::channel::oneshot::Sender as SyncSender;
 
 /// Converter trait, packs message into a suitable envelope.
 pub trait ToEnvelope<A, M: Message>
@@ -13,7 +13,7 @@ where
     A::Context: ToEnvelope<A, M>,
 {
     /// Pack message into suitable envelope
-    fn pack(msg: M, tx: Option<Sender<M::Result>>) -> Envelope<A>;
+    fn pack(msg: M, tx: Option<SyncSender<M::Result>>) -> Envelope<A>;
 }
 
 pub trait EnvelopeProxy {
@@ -33,7 +33,7 @@ where
     M: Message + Send + 'static,
     M::Result: Send,
 {
-    fn pack(msg: M, tx: Option<Sender<M::Result>>) -> Envelope<A> {
+    fn pack(msg: M, tx: Option<SyncSender<M::Result>>) -> Envelope<A> {
         Envelope::new(msg, tx)
     }
 }
@@ -41,7 +41,7 @@ where
 pub struct Envelope<A: Actor>(Box<dyn EnvelopeProxy<Actor = A> + Send>);
 
 impl<A: Actor> Envelope<A> {
-    pub fn new<M>(msg: M, tx: Option<Sender<M::Result>>) -> Self
+    pub fn new<M>(msg: M, tx: Option<SyncSender<M::Result>>) -> Self
     where
         A: Handler<M>,
         A::Context: AsyncContext<A>,
@@ -79,7 +79,7 @@ where
 {
     act: PhantomData<A>,
     msg: Option<M>,
-    tx: Option<Sender<M::Result>>,
+    tx: Option<SyncSender<M::Result>>,
 }
 
 unsafe impl<A, M> Send for SyncEnvelopeProxy<A, M>

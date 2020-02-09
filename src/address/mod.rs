@@ -11,7 +11,7 @@ mod queue;
 use crate::actor::Actor;
 use crate::handler::{Handler, Message};
 
-pub use self::envelope::{Envelope, EnvelopeProxy, ToEnvelope};
+pub use self::envelope::{Envelope, EnvelopeProxy, SyncSender, ToEnvelope};
 pub use self::message::{RecipientRequest, Request};
 
 pub(crate) use self::channel::{AddressReceiver, AddressSenderProducer};
